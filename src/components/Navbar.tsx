@@ -1,16 +1,48 @@
-import { Button } from './Button'
+import { useRecipeActions } from '@/stores/recipeStore'
+import PageContainer from './ui/PageContainer'
+import { v4 as uuidV4 } from 'uuid'
+import { Button } from './Buttons/Button'
+import { CirclePlusIcon } from 'lucide-react'
+import { toast } from 'sonner'
 
 const Navbar = () => {
+  const { addRecipe, setSelectedRecipeId } = useRecipeActions()
   return (
-    <div className='sticky bg-white top-0 h-24 z-50 w-full'>
-      <div className='max-w-[1400px] flex items-center justify-between px-6 h-full mx-auto'>
-        <div></div>
-        <h1 className='text-6xl text-center font-bold text-emerald-800 whitespace-nowrap'>
-          Recipes 2025
-        </h1>
-        <Button className=''>Add Recipe</Button>
-      </div>
-    </div>
+    <PageContainer top='top-0' background='bg-indigo-500/90'>
+      <h1 className='text-3xl text-center w-full font-bold text-white whitespace-nowrap'>
+        Recipes 2025
+      </h1>
+      <Button
+        className='absolute right-6 px-10 flex items-center'
+        variant={'dark'}
+        size={'lg'}
+        onClick={() => {
+          try {
+            // Generate a new ID for the recipe
+            const newRecipeId = uuidV4()
+
+            // Add the new recipe with this ID
+            addRecipe(newRecipeId)
+            
+            // Select the newly added recipe
+            setSelectedRecipeId(newRecipeId)
+            
+            // Scroll to the top of the page
+            window.scrollTo({
+              top: 0,
+              behavior: 'smooth'
+            })
+            
+            toast.success('New recipe created')
+          } catch (error) {
+            console.log(error)
+            toast.error('Failed to create new recipe')
+          }
+        }}>
+        <span className='text-indigo-600'>New Recipe</span>
+        <CirclePlusIcon className='stroke-3 text-indigo-600' />
+      </Button>
+    </PageContainer>
   )
 }
 export default Navbar

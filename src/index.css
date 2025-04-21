@@ -40,7 +40,7 @@
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
-  --font-main: 'Gotham Rounded';
+  --font-main: 'Gotham Rounded', serif;
   --font-main-bold:var(--font-main-bold)
   --font-main-regular:var(--font-main-regular)
   --font-main-light:var(--font-main-light)
@@ -64,7 +64,7 @@
   --accent-foreground: hsl(0, 0%, 20%);
   --destructive: hsl(355, 91%, 58%);
   --border: hsl(0, 0%, 92%);
-  --input: hsl(0, 0%, 92%);
+  --input: hsl(0, 0%, 62%);
   --ring: hsl(0, 0%, 70%);
   --chart-1: hsl(41, 65%, 65%);
   --chart-2: hsl(185, 35%, 60%);
@@ -127,19 +127,17 @@
   }
 }
 
-body,html{
+body,
+html {
   width: 100dvw;
-  height: 100dvh;
-  overflow-x: hidden;
-  overflow-y: scroll;
-  box-sizing: border-box; 
+  min-width: 960px;
+  box-sizing: border-box;
   max-height: 100dvh;
   background: var(--color-slate-100);
 }
 
-
 #root {
   width: 100%;
-  margin:  0 auto;
+  height: 100%;
+  margin: 0 auto;
 }
-

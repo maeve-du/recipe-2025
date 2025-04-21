@@ -1,15 +1,15 @@
-import Navbar from './components/Navbar'
-import RecipeEditor from './components/RecipeEditor'
-import RecipeList from './components/RecipeList'
+import Footer from '@/components/Footer'
+import Navbar from '@/components/Navbar'
+import RecipeSection from './components/RecipeSection'
+import { Toaster } from 'sonner'
 
 const App = () => {
   return (
-    <div className='flex flex-col gap-3 w-full'>
+    <div className='flex flex-col justify-between gap-3 w-full min-h-[100dvh]'>
       <Navbar />
-      <div className='flex flex-row justify-between gap-3 px-6 w-full max-w-[1400px] mx-auto bg-red-200 mb-12'>
-        <RecipeList />
-        <RecipeEditor />
-      </div>
+      <RecipeSection />
+      <Footer />
+      <Toaster position='top-center' />
     </div>
   )
 }
