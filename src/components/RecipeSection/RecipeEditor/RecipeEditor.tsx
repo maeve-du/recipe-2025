@@ -20,7 +20,7 @@ const RecipeEditor = () => {
   if (!selectedRecipe) return null
 
   return (
-    <div className='bg-white flex-2 sticky rounded-lg drop-shadow-sm w-[65%] top-[96px] h-[80dvh] overflow-scroll'>
+    <div className='bg-white flex-2 sticky rounded-lg drop-shadow-sm w-[65%] top-[82px] h-[80dvh] overflow-scroll'>
       <EditorHeader
         formId={formId}
         onShowCancelDialog={() => setShowCancelDialog(true)}

@@ -5,7 +5,7 @@ import { Toaster } from 'sonner'
 
 const App = () => {
   return (
-    <div className='flex flex-col justify-between gap-3 w-full min-h-[100dvh]'>
+    <div className='flex flex-col justify-between gap-0 w-full min-h-screen'>
       <Navbar />
       <RecipeSection />
       <Footer />

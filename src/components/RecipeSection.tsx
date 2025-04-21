@@ -9,7 +9,7 @@ const RecipeSection = () => {
   return (
     <div
       className={clsMerge(
-        'flex flex-row justify-between gap-6 px-6 w-full mx-auto mb-20 max-w-[1200px] min-w-[960px] '
+        'flex flex-row justify-between gap-6 px-6 w-full mx-auto mb-20 max-w-[1200px] min-w-[960px]'
       )}>
       <RecipeList />
       {selectedRecipeId && <RecipeEditor />}
