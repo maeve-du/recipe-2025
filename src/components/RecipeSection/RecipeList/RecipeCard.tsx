@@ -6,39 +6,28 @@ import {
   Trash2Icon,
   UsersIcon
 } from 'lucide-react'
-import { Recipe, useRecipeActions, useSelectedRecipeId } from '@/stores/recipeStore'
+import { Recipe } from '@/stores/recipeStore'
 import { Button } from '@/components/Buttons/Button'
 import { clsMerge } from '@/lib/utils'
+import { useRecipeCard } from './useRecipeCard'
 import ConfirmationDialog from '@/components/ui/ConfirmationDialog'
-import { useState } from 'react'
-import { toast } from 'sonner'
 
 interface RecipeCardProps {
   recipe: Recipe
 }
 
 const RecipeCard = ({ recipe }: RecipeCardProps) => {
-  const handleDeleteConfirm = () => {
-    try {
-      if (recipe.id) {
-        deleteRecipe(recipe.id)
-      }
-      setSelectedRecipeId(null)
-      toast.success('Recipe deleted')
-    } catch (error) {
-      console.log(error)
-      toast.error('Failed to delete recipe')
-    }
-  }
-  const [showDeleteDialog, setShowDeleteDialog] = useState(false)
-  const { setSelectedRecipeId, deleteRecipe, toggleRecipeSelection } = useRecipeActions()
-  const selectedRecipeId = useSelectedRecipeId()
-  const InstructionNotEmpty =
-    recipe.ingredients.length >= 1 && recipe.instructions[0].value.length > 0
-  const ingredientNotEmpty =
-    recipe.ingredients.length >= 1 &&
-    recipe.ingredients[0].name.length > 0 &&
-    recipe.ingredients[0].amount.length > 0
+  const {
+    toggleCard,
+    selectedRecipeId,
+    openDeleteDialog,
+    closeDeleteDialog,
+    showDeleteDialog,
+    handleDeleteConfirm,
+    isInstructionNotEmpty,
+    isIngredientNotEmpty
+  } = useRecipeCard(recipe)
+
   return (
     <div
       className={clsMerge(
@@ -47,27 +36,20 @@ const RecipeCard = ({ recipe }: RecipeCardProps) => {
           ? 'border-2 border-indigo-600'
           : 'border-2 border-transparent'
       )}
-      onClick={() => {
-        // setSelectedRecipeId(recipe.id)
-        toggleRecipeSelection(recipe.id)
-      }}>
+      onClick={toggleCard}>
       <div className='flex justify-between items-center mb-6 gap-0.5'>
         <p className='text-xl font-bold line-clamp-2 w-full align-middle'>{recipe.name}</p>
         <Button
           variant={'outline'}
           className='text-zinc-500 hover:text-red-600 '
           size={'icon'}
-          onClick={(event) => {
-            event.stopPropagation()
-            // deleteRecipe(recipe.id)
-            setShowDeleteDialog(true)
-          }}>
+          onClick={openDeleteDialog}>
           <Trash2Icon className='w-5 h-5' />
         </Button>
         {/* Delete Confirmation Dialog */}
         <ConfirmationDialog
           open={showDeleteDialog}
-          onClose={() => setShowDeleteDialog(false)}
+          onClose={closeDeleteDialog}
           onConfirm={handleDeleteConfirm}
           title='Delete Recipe'
           description='Are you sure you want to delete this recipe? This action cannot be undone.'
@@ -92,7 +74,7 @@ const RecipeCard = ({ recipe }: RecipeCardProps) => {
         {/* Instructions */}
         <div>
           <RecipeDetail label='Instructions' icon={ChefHatIcon} />
-          {InstructionNotEmpty ? (
+          {isInstructionNotEmpty ? (
             recipe.instructions.map((item, index) => (
               <li className='font-normal list-none flex gap-1 ml-2' key={index}>
                 <p className='w-8 text-center text-foreground/50'>
@@ -111,7 +93,7 @@ const RecipeCard = ({ recipe }: RecipeCardProps) => {
         <div>
           <RecipeDetail label='Ingredients' icon={CookingPotIcon} />
 
-          {ingredientNotEmpty ? (
+          {isIngredientNotEmpty ? (
             <div className='border rounded-lg overflow-hidden border-indigo-500/20 mt-3 ml-2'>
               <table className='w-full border-separate border-spacing-0'>
                 <thead>

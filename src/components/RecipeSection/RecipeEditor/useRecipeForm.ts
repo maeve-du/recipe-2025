@@ -1,4 +1,4 @@
-import { Recipe } from '@/stores/recipeStore'
+import { Recipe, useRecipeActions } from '@/stores/recipeStore'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useEffect } from 'react'
 import { useFieldArray, useForm } from 'react-hook-form'
@@ -7,49 +7,72 @@ import { z } from 'zod'
 // Form schema definition
 export const RecipeFormSchema = z.object({
   name: z.string().min(3, {
-    message: 'Recipe name should be at least 3 characters'
+    message: 'Recipe name must be at least 3 characters long'
   }),
   cookTime: z
     .number({
-      required_error: 'Cook time is required.',
-      invalid_type_error: 'Cook time is required.'
+      required_error: 'Please specify a cook time',
+      invalid_type_error: 'Cook time must be a number (e.g., 30)'
     })
-    .positive({ message: 'Cook time should be more than zero minutes' }),
+    .positive({ message: 'Cook time must be greater than zero' }),
   servings: z
-    .number({ required_error: 'Amount of Servings is required.' })
-    .positive({ message: 'Amount of Servings should be more than zero' }),
+    .number({
+      required_error: 'Please specify the number of servings',
+      invalid_type_error: 'Servings must be a number (e.g., 4)'
+    })
+    .positive({ message: 'Number of servings must be greater than zero' }),
   instructions: z
     .array(
       z.object({
-        value: z.string().min(3, { message: 'Instruction should be at least 3 characters' })
+        value: z.string().min(3, { message: 'Each instruction must be at least 3 characters long' })
       })
     )
-    .min(1, { message: 'Instructions are required' }),
+    .min(1, { message: 'Please add at least one instruction' }),
   ingredients: z
     .array(
       z.object({
-        name: z.string().min(1, { message: 'Ingredient name is required.' }),
-        amount: z.string().min(1, { message: 'Ingredient Amount is required.' })
+        name: z.string().min(1, { message: 'Please enter an ingredient name' }),
+        amount: z.string().min(1, { message: 'Please specify the amount' })
       })
     )
-    .min(1, { message: 'Ingredients are required.' })
+    .min(1, { message: 'Please add at least one ingredient' })
 })
 
 export type RecipeFormValues = z.infer<typeof RecipeFormSchema>
 
-export const useRecipeForm = (recipe: Recipe) => {
+export const useRecipeForm = (
+  recipe: Recipe,
+  setIsFormValid?: (isValid: boolean) => void,
+  setIsFormDirty?: (isFormDirty: boolean) => void
+) => {
+  const { updateRecipe } = useRecipeActions()
   const {
     register,
     control,
     handleSubmit,
-    formState: { errors },
+    formState: { errors, isValid, isDirty },
     reset
   } = useForm<RecipeFormValues>({
     resolver: zodResolver(RecipeFormSchema),
     defaultValues: {
       ...recipe
-    }
+    },
+    mode: 'onChange'
   })
+
+  // Update the form's validity state whenever isValid changes
+  useEffect(() => {
+    if (setIsFormValid) {
+      setIsFormValid(isValid)
+    }
+  }, [isValid, setIsFormValid])
+
+  // Track if the form has been modified
+  useEffect(() => {
+    if (setIsFormDirty) {
+      setIsFormDirty(isDirty)
+    }
+  }, [isDirty, setIsFormDirty])
 
   // Reset form when recipe changes
   useEffect(() => {
@@ -75,6 +98,7 @@ export const useRecipeForm = (recipe: Recipe) => {
   })
 
   return {
+    updateRecipe,
     register,
     handleSubmit,
     errors,

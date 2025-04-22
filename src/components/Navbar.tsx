@@ -20,19 +20,16 @@ const Navbar = () => {
           try {
             // Generate a new ID for the recipe
             const newRecipeId = uuidV4()
-
             // Add the new recipe with this ID
             addRecipe(newRecipeId)
-            
             // Select the newly added recipe
             setSelectedRecipeId(newRecipeId)
-            
             // Scroll to the top of the page
             window.scrollTo({
               top: 0,
               behavior: 'smooth'
             })
-            
+
             toast.success('New recipe created')
           } catch (error) {
             console.log(error)

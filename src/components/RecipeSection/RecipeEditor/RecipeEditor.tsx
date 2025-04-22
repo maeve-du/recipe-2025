@@ -1,33 +1,51 @@
 import { Button } from '@/components/Buttons/Button'
 import { Fragment } from 'react/jsx-runtime'
-import { useState } from 'react'
 import { Separator } from '@radix-ui/react-separator'
 import { Trash2Icon } from 'lucide-react'
 import EditorForm from './EditorForm'
+import { clsMerge } from '@/lib/utils'
+import { useEditorState } from './useEditorState'
 import ConfirmationDialog from '@/components/ui/ConfirmationDialog'
-import { useRecipeActions, useSelectedRecipe, useSelectedRecipeId } from '@/stores/recipeStore'
-import { toast } from 'sonner'
 
 // Editor
 const RecipeEditor = () => {
-  const formId = 'recipe-form'
-  const selectedRecipe = useSelectedRecipe()
-  const [showCancelDialog, setShowCancelDialog] = useState(false)
-  const [showDeleteDialog, setShowDeleteDialog] = useState(false)
-  const { setSelectedRecipeId, deleteRecipe } = useRecipeActions()
-  const selectedRecipeId = useSelectedRecipeId()
+  const {
+    toast,
+    formId,
+    selectedRecipeId,
+    setSelectedRecipeId,
+    selectedRecipe,
+    deleteRecipe,
+    isFormValid,
+    setIsFormValid,
+    setIsFormDirty,
+    showCancelDialog,
+    setShowCancelDialog,
+    handleCancelClick,
+    showDeleteDialog,
+    setShowDeleteDialog
+  } = useEditorState()
 
   if (!selectedRecipe) return null
 
   return (
     <div className='bg-white flex-2 sticky rounded-lg drop-shadow-sm w-[65%] top-[82px] h-[80dvh] overflow-scroll'>
+      {/* Header */}
       <EditorHeader
         formId={formId}
-        onShowCancelDialog={() => setShowCancelDialog(true)}
+        isFormValid={isFormValid}
+        onShowCancelDialog={handleCancelClick}
         onShowDeleteDialog={() => setShowDeleteDialog(true)}
       />
       <Separator className='my-6' />
-      <EditorForm recipe={selectedRecipe} formId={formId} />
+
+      {/* Form */}
+      <EditorForm
+        recipe={selectedRecipe}
+        formId={formId}
+        setIsFormValid={setIsFormValid}
+        setIsFormDirty={setIsFormDirty}
+      />
 
       {/* Cancel Confirmation Dialog */}
       <ConfirmationDialog
@@ -71,18 +89,27 @@ export default RecipeEditor
 
 interface EditorHeaderProps {
   formId: string
+  isFormValid: boolean
   onShowCancelDialog: () => void
   onShowDeleteDialog: () => void
 }
 
-const EditorHeader = ({ formId, onShowCancelDialog, onShowDeleteDialog }: EditorHeaderProps) => {
+// header
+const EditorHeader = ({
+  formId,
+  onShowCancelDialog,
+  onShowDeleteDialog,
+  isFormValid
+}: EditorHeaderProps) => {
   return (
     <Fragment>
-      {/* header */}
-      <div className='flex justify-between items-center px-6 sticky top-0 bg-white h-20 shadow-sm w-full'>
+      <div className='flex justify-between items-center px-6 sticky top-0 bg-white h-20 shadow-sm w-full z-30'>
         <h2 className='text-3xl'>Edit recipe</h2>
         <div className='flex gap-3'>
-          <Button type='submit' form={formId} className='w-25'>
+          <Button
+            type='submit'
+            form={formId}
+            className={clsMerge('w-25', isFormValid ? 'opacity-100' : 'opacity-50')}>
             Save
           </Button>
           <Button className='w-25' variant={'outline'} onClick={onShowCancelDialog}>

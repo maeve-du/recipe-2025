@@ -17,6 +17,7 @@ interface ConfirmationDialogProps {
   confirmText?: string
   cancelText?: string
   variant?: 'default' | 'destructive'
+  stopPropagation?: boolean
 }
 
 const ConfirmationDialog = ({
@@ -27,10 +28,18 @@ const ConfirmationDialog = ({
   description,
   confirmText = 'Confirm',
   cancelText = 'Cancel',
-  variant = 'default'
+  variant = 'default',
+  stopPropagation = true
 }: ConfirmationDialogProps) => {
   const handleConfirm = () => {
     onConfirm()
+    onClose()
+  }
+
+  const handleCancel = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+    if (stopPropagation) {
+      event.stopPropagation()
+    }
     onClose()
   }
 
@@ -42,10 +51,12 @@ const ConfirmationDialog = ({
           <DialogDescription>{description}</DialogDescription>
         </DialogHeader>
         <DialogFooter>
-          <Button variant='outline' onClick={onClose}>
+          <Button variant='outline' onClick={handleCancel}>
             {cancelText}
           </Button>
-          <Button variant={variant === 'destructive' ? 'destructive' : 'default'} onClick={handleConfirm}>
+          <Button
+            variant={variant === 'destructive' ? 'destructive' : 'default'}
+            onClick={handleConfirm}>
             {confirmText}
           </Button>
         </DialogFooter>

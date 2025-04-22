@@ -3,19 +3,20 @@ import { Input } from '@/components/ui/input'
 import { clsMerge } from '@/lib/utils'
 import { ReactNode } from 'react'
 import { useRecipeForm } from './useRecipeForm'
-import RemoveItemButton from '@/components/Buttons/RemoveItemButton'
-import { Recipe, useRecipeActions } from '@/stores/recipeStore'
 import { toast } from 'sonner'
+import { Recipe } from '@/stores/recipeStore'
+import RemoveItemButton from '@/components/Buttons/RemoveItemButton'
 
 interface EditorFormProps {
   recipe: Recipe
   formId: string
+  setIsFormValid: (isValid: boolean) => void
+  setIsFormDirty: (isValid: boolean) => void
 }
 
-const EditorForm = ({ recipe, formId }: EditorFormProps) => {
-  const { updateRecipe } = useRecipeActions()
-
+const EditorForm = ({ recipe, formId, setIsFormValid, setIsFormDirty }: EditorFormProps) => {
   const {
+    updateRecipe,
     register,
     handleSubmit,
     errors,
@@ -25,7 +26,7 @@ const EditorForm = ({ recipe, formId }: EditorFormProps) => {
     ingredientFields,
     ingredientAppend,
     ingredientRemove
-  } = useRecipeForm(recipe)
+  } = useRecipeForm(recipe, setIsFormValid, setIsFormDirty)
 
   return (
     <div className='min-h-full mb-32 px-6'>
@@ -164,7 +165,7 @@ interface ErrorMessageProps {
   message: string | undefined
 }
 const ErrorMessage = ({ message }: ErrorMessageProps) => {
-  return <p className='pl-2 text-red-700'>{message}</p>
+  return <p className='pl-2 text-red-700 text-sm'>{message}</p>
 }
 
 // Form item field
