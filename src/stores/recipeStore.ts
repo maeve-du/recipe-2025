@@ -37,7 +37,7 @@ interface RecipeStore {
   selectedRecipeId: UUID | null
   actions: RecipeActions
 }
-let Count = 0
+
 const useRecipeStore = create<RecipeStore>()(
   persist(
     immer((set) => ({
@@ -45,31 +45,17 @@ const useRecipeStore = create<RecipeStore>()(
       selectedRecipeId: null,
       actions: {
         toggleRecipeSelection: (recipeId) => {
-          // Increment the counter and log it
-          Count++
-          console.log(`called ${Count} times with ID: ${recipeId}`)
           return set((state) => {
             // If the same recipe is selected again, deselect it
             if (state.selectedRecipeId === recipeId) {
               state.selectedRecipeId = null
-              console.log(
-                'toggleRecipeSelection1',
-                'selectedRecipeId:',
-                state.selectedRecipeId,
-                'recipeId',
-                recipeId
-              )
             } else {
               // Otherwise select the new recipe
               state.selectedRecipeId = recipeId
-              console.log('toggleRecipeSelection2', state.selectedRecipeId, recipeId)
             }
           })
         },
         setSelectedRecipeId: (recipeId) => {
-          // Increment the counter and log it
-          Count++
-          console.log(`called ${Count} times with ID: ${recipeId}`)
           return set((state) => {
             if (recipeId === null) {
               state.selectedRecipeId = null
